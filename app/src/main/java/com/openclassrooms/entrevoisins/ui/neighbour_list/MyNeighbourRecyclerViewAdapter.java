@@ -51,6 +51,7 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
                 EventBus.getDefault().post(new DeleteNeighbourEvent(neighbour));
             }
         });
+        // holder.:
     }
 
     @Override
@@ -71,4 +72,14 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
             ButterKnife.bind(this, view);
         }
     }
+
+    /**
+     * méthode publique récupérant un utilisateur en fonction d'une position donnée.Non utilisée
+     * @param position
+     * @return
+     */
+    /**public Neighbour getUser(int position){
+        return this.mNeighbours.get(position);
+    }*/
+
 }

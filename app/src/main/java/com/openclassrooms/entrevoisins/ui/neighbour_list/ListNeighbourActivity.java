@@ -43,4 +43,14 @@ public class ListNeighbourActivity extends AppCompatActivity {
     void addNeighbour() {
         AddNeighbourActivity.navigate(this);
     }
+
+    /**
+     * Select item
+     */
+    /**@OnClick(R.id.item_list_name)
+    void vuNeighbour() { //DetailNeighbourActivity.DISPLAY_SERVICE;
+    }*/
+
+
+
 }
