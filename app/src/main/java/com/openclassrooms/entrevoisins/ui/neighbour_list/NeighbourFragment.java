@@ -1,7 +1,9 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
@@ -30,13 +34,17 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
-//import com.openclassrooms.entrevoisins.ui.neighbour_list.MyNeighbourRecyclerViewAdapter;
+import butterknife.OnItemSelected;
 
 public class  NeighbourFragment extends Fragment {
 
     private NeighbourApiService mApiService;
     private List<Neighbour> mNeighbours;
     private RecyclerView mRecyclerView;
+
+    private final String EXTRA_NAME = "name";
+    private final String EXTRA_AVATAR = "avatar";
+    private final String EXTRA_ABOUT = "avatr";
 
     /**
      * Create and return a new instance
@@ -103,7 +111,6 @@ public class  NeighbourFragment extends Fragment {
         initList();
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -124,17 +131,34 @@ public class  NeighbourFragment extends Fragment {
                         //Neighbour user = mAdapter.getUser(position);
                         Neighbour user = mNeighbours.get(position);
         // 2 - Show result in a Toast
-                        Toast.makeText(getContext(), "You clicked on user : " +user.getId(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "You clicked on user : " +user.getId(), Toast.LENGTH_SHORT).show();
                         // recupere fragment servant afficher detail
-                        DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
-                        Intent NeighnourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
-                        NeighnourActivity.putExtra("user", user.getId());
+                        //DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
+                        Intent NeighbourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
+                        //NeighbourActivity.putExtra("userId", user.getId());
+                        NeighbourActivity.putExtra(EXTRA_NAME, user.getName());
+                        // + context
+                        /**NeighbourActivity.putExtra(EXTRA_AVATR, Glide.with(getView().getContext())
+                                .load(user.getAvatarUrl())
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(EXTRA_AVATR);*/
+                        NeighbourActivity.putExtra(EXTRA_AVATAR, user.getAvatarUrl());
+                        //NeighbourActivity.putExtra(EXTRA_ABOUT, user.getAboutMe());
                         // exec activité detail
-                        startActivity(NeighnourActivity);
+                        startActivity(NeighbourActivity);
                     }
                 });
     }
 
+    @Subscribe
+    public void onClickNeighbour(OnItemSelected event) {
+        //mApiService.deleteNeighbour(event.neighbour);
+        initList();
+    }
 
+    @Subscribe
+    public void onActivityCreated(){
+
+    }
 
 }
