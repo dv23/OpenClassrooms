@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.neighbour_list.DetailNeighbourActivity"></activity>
+            android:name=".view.neighbour.DetailNeighbourActivity"></activity>
     </application>
 
 </manifest>
