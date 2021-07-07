@@ -25,6 +25,8 @@ public class Neighbour {
     /** About me */
     private String aboutMe;
 
+    private boolean favorite;
+
     /**
      * Constructor
      * @param id
@@ -101,4 +103,13 @@ public class Neighbour {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public boolean isFavorite(){
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
 }
