@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 //import android.widget.Toolbar;
 //import android.support.v7.widget.Toolbar;
 
@@ -17,11 +18,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.repositories.NeighbourRepository;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
+import com.openclassrooms.entrevoisins.ui.neighbour_list.FavoriteFragment;
 import com.openclassrooms.entrevoisins.ui.neighbour_list.ListNeighbourActivity;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 import static android.nfc.NfcAdapter.EXTRA_ID;
 
@@ -47,14 +50,17 @@ public class DetailNeighbourActivity extends AppCompatActivity {
     public static final String EXTRA_AVATAR = "avatar";
     public static final String EXTRA_ABOUT = "about";
 
+    public static final String BUNDLE_EXTRA_FAVORI = "BUNDLE_EXTRA_FAVORI";
+
     private long mIdl = 0;
     private String[] mIdStr;
-
+    private int mFavori;
     private TextView mNeighbourTextView;
     private TextView mNeighbourAboutTextView;
     private String mAvatarStringView;
     private long mnLong;
     private ImageView mAvatarImageView;
+    private View myFavorite;
 
     /**public static Intent navigate(Context context, Book book) {
         Intent intent = new Intent(context, DetailActivity.class);
@@ -68,19 +74,15 @@ public class DetailNeighbourActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_detail_neighbour);
         setContentView(R.layout.activity_neighbour);
-
+        mFavori = 0;
         mApiService = DI.getNeighbourApiService();
         //mNeighbours = mApiService.getNeighbours();
         btHAcceuil();
         Bundle extras = getIntent().getExtras();
-        //System.out.println(" DetailNeighbour Bundle extras tostring : " + extras.toString());
         //System.out.println(" DetailNeighbour Bundle extras  : " + extras);
         //mId = Integer.parseInt(intent.getStringExtra(EXTRA_ID));
         if (extras != null) {
             //NeighbourAdapter = new NeighbourAdapter(DetailNeighbourActivity.this,IdVoisin, NeighbourAdapter.getItemId() );
-
-            //mIdstr = getIntent().getSerializableExtra(EXTRA_ID);
-            //mIdStr=extras.getString(EXTRA_ID);
 
             mIdl=getIntent().getLongExtra("EXTRA_ID",0);
             System.out.println(" Test mIdl  :" + mIdl);
@@ -91,22 +93,14 @@ public class DetailNeighbourActivity extends AppCompatActivity {
                 System.out.println(" Test extra mId  :" + mIdl);
             }
 
-        /**
-        if (savedInstanceState != null) {
-            mId = savedInstanceState.getInt(EXTRA_NID);
-            //mId = savedInstanceState.getString(EXTRA_ID);
-            //mId = Integer.parseInt(intent.getStringExtra(EXTRA_NID));
-            System.out.println(" Test EXTRA NID  :" + mId);
-            //System.out.println(" Test EXTRA NID+string   :" + EXTRA_NID.toString());
-        }
-        else {
-            mId = 0;
-        }
-        System.out.println(" Test EXTRA NID  :" + mId);
-        */
-
         //Neighbour neighbour = mNeighbours.get(getWallpaperDesiredMinimumWidth());
-
+        if (savedInstanceState != null) {
+            mFavori = savedInstanceState.getInt(BUNDLE_EXTRA_FAVORI);
+            //mNumberOfQuestions = savedInstanceState.getInt(BUNDLE_STATE_QUESTION);
+        } else {
+            mFavori = 0;
+            //mNumberOfQuestions = 4;
+        }
         //String nT = mApiService.getNeighbours().get(idTxt);
         //String aboutTxt = intent.getStringExtra(EXTRA_ABOUT);
 
@@ -121,31 +115,24 @@ public class DetailNeighbourActivity extends AppCompatActivity {
             //.apply(RequestOptions.circleCropTransform()).into(mAvatarImageView);
             //.apply(RequestOptions.centerInsideTransform()).into(mAvatarImageView);
             .apply(RequestOptions.noTransformation()).into(mAvatarImageView);
-            //.apply(RequestOptions.fitCenterTransform()).into(mAvatarImageView);
-            //mAvatarTextView.setText(avatarTxt);
 
         String nameTxt = mApiService.getNeighbours().get((int) mIdl-1).getName();
         //String nameTxt = intent.getStringExtra(EXTRA_NAME);
-        System.out.println(" Test EXTRA NAME  :" + nameTxt);
+        //System.out.println(" Test EXTRA NAME  :" + nameTxt);
         mNeighbourTextView = (TextView) findViewById(R.id.n_name);
         mNeighbourTextView.setText(nameTxt);
 
             //mNeighbourAboutTextView = (TextView) findViewById(R.id.n_aboutme);
             //mNeighbourAboutTextView.setText(aboutTxt);
+
+        //getFragmentManager().beginTransaction().add(R.id.container, new FavoriteFragment()).addToBackStack(null).commit();
         }
-
-    /**
-     * Select item
-     */
-    /**@OnClick(R.id.item_list_name)
-    void vuNeighbour() {
-
-    }*/
 
     public void btHAcceuil() {
         ImageButton btBackAccueil = (ImageButton) findViewById(R.id.btAcceuil);
         btBackAccueil.setImageResource(R.drawable.back);
-        cmdMenu_clic(btBackAccueil, ListNeighbourActivity.class);
+        cmdMenu_click(btBackAccueil, ListNeighbourActivity.class);
+
     }
 
     /**private void displayNeighbour(final Question question) {
@@ -155,17 +142,62 @@ public class DetailNeighbourActivity extends AppCompatActivity {
         mAnswerButton3.setText(question.getChoiceList().get(2));
         mAnswerButton4.setText(question.getChoiceList().get(3));*/
 
-    public void cmdMenu_clic(ImageButton ib, final Class cls) {
+    public void cmdMenu_click(ImageButton ibc, final Class cls) {
         //final Intent it = new Intent(MainActivity.this,cls);
         //startActivity(it);
-        ib.setOnClickListener(new ImageButton.OnClickListener() {
+        ibc.setOnClickListener(new ImageButton.OnClickListener() {
             //((ImageButton) findViewById(R.id.ImgBtnNormal).setOnClickListener(new ImageButton.OnClickListener() {
-            //@Override
+            @Override
             public void onClick(View v) {
                 Intent it = new Intent(DetailNeighbourActivity.this, cls);
                 startActivity(it);
+                // End the activity
+                Intent intent = new Intent();
+                mFavori= (int) mIdl;
+                intent.putExtra(BUNDLE_EXTRA_FAVORI, mFavori);
+                setResult(RESULT_OK, intent);
             }
         });
     }
 
+    public void btStarFavorit() {
+        ImageButton btStarStrip = (ImageButton) findViewById(R.id.n_star);
+        btStarStrip.setImageResource(R.drawable.ic_star_white_24dp);
+        cmdFavoritStrip_click(btStarStrip, ListNeighbourActivity.class);
+    }
+
+    public void cmdFavoritStrip_click(ImageButton ibf, final Class cls) {
+        //final Intent it = new Intent(MainActivity.this,cls);
+        //startActivity(it);
+        ibf.setOnClickListener(new ImageButton.OnClickListener() {
+            //((ImageButton) findViewById(R.id.ImgBtnNormal).setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               //mApiService.addFavoriteNeighbour(mApiService.getNeighbours().get((int) (mIdl - 1)));
+               Toast.makeText(getApplicationContext(), "added", Toast.LENGTH_SHORT);
+               //System.out.println(" detail Neighbour Test favorit N  :" + mApiService.getNeighbours().size());
+               //getSupportFragmentManager().findFragmentById(R.id.pager_title_strip);
+
+               //getFragmentManager().findFragmentById(R.id.VP);
+               //startActivity(it);
+            }
+        });
+    }
+
+   /** private void initListener() {
+        myFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mApiService.getNeighbours().get((int) mIdl - 1).isFavorite()) {
+                    mApiService.addFavoriteNeighbour(mApiService.getNeighbours().get((int) (mIdl - 1)));
+                    Toast.makeText(getApplicationContext(), "added", Toast.LENGTH_SHORT);
+                    System.out.println(" Test N pas favoris  :" + mApiService.getNeighbours().size());
+                } else if(mApiService.getNeighbours().get((int) mIdl - 1).isFavorite()) {
+                    mApiService.deleteNeighbour(mApiService.getNeighbours().get((int) (mIdl-1)));
+                    Toast.makeText(getApplicationContext(), "added", Toast.LENGTH_SHORT);
+                    System.out.println(" Test favorit N  :" + mApiService.getNeighbours().size());
+                }
+            }
+        });
+    }*/
     }
