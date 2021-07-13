@@ -5,11 +5,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 
-public class DetailNeighbourPagerAdapter extends FragmentPagerAdapter {
+public class FavoritePagerAdapter extends FragmentPagerAdapter {
 
     private String[] tabvpager;
 
-    public DetailNeighbourPagerAdapter(FragmentManager fm) {
+    public FavoritePagerAdapter(FragmentManager fm) {
         // constructeur de l'adapteur
         super(fm);
         tabvpager = new String[]{"position1", "position2", "position3"};
@@ -22,7 +22,7 @@ public class DetailNeighbourPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public Fragment getItem(final int position) {
-        return DetailNeighbourFragment.newInstance(tabvpager[position]);
+        return FavoriteFragment.newInstance(tabvpager[position]);
     }
 
     /**

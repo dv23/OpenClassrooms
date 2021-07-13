@@ -30,6 +30,7 @@ public class DummyNeighbourApiService implements  NeighbourApiService {
 
     /**
      * {@inheritDoc}
+     *
      * @param neighbour
      */
     @Override
@@ -38,32 +39,26 @@ public class DummyNeighbourApiService implements  NeighbourApiService {
     }
 
     /**
-     *  ajoute le neighbour en cours de lecture à la liste "favorites" si le booléen est true), puis qui renvoie la liste "favorites" en sortie de boucle:
+     * ajoute le neighbour en cours de lecture à la liste "favorites" si le booléen est true), puis qui renvoie la liste "favorites" en sortie de boucle:
+     *
      * @param neighbour
      */
     @Override
-    public void addFavoriteNeighbour(Neighbour neighbour){
-    neighbour.setFavorite(true);
+    public void addFavoriteNeighbour(Neighbour neighbour) {
+        //neighbour.setFavorite(true);
+        neighbours.add(neighbour);
     }
 
     @Override
-    public void deleteFavoriteNeighbour(Neighbour neighbour){
-        neighbour.setFavorite(true);
+    public void deleteFavoriteNeighbour(Neighbour neighbour) {
+        neighbours.remove(neighbour);
+        //neighbour.setFavorite(true);
     }
 
-    /**
-     * lecture liste "favorites" si le booléen est true, puis renvoie la liste "favorites" en sortie de boucle:
-     */
     @Override
-    public List<Neighbour> getFavoriteNeighbours(){
-        List <Neighbour> mFavorites = new ArrayList<>();
-        for (int i=0; i< neighbours.size();i++){
-            Neighbour neighbour = neighbours.get(i);
-            if (neighbour.isFavorite()){
-                mFavorites.add(neighbour);
-            }
-        }
-        return mFavorites;
+    public List<Neighbour> getFavoriteNeighbours() {
+        //neighbours.get();
+        return getNeighbours();
     }
 
 }

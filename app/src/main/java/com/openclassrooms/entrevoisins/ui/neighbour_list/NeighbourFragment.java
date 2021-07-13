@@ -28,7 +28,7 @@ import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
 import com.openclassrooms.entrevoisins.model.Neighbour;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 import com.openclassrooms.entrevoisins.events.ItemClickSupport;
-
+import com.openclassrooms.entrevoisins.view.neighbour.DetailNeighbourActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -131,19 +131,14 @@ public class  NeighbourFragment extends Fragment {
                         //Neighbour user = mAdapter.getUser(position);
                         Neighbour user = mNeighbours.get(position);
         // 2 - Show result in a Toast
-                        //Toast.makeText(getContext(), "You clicked on user : " +user.getId(), Toast.LENGTH_SHORT).show();
-                        // recupere fragment servant afficher detail
                         //DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
                         Intent NeighbourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
                         //NeighbourActivity.putExtra("userId", user.getId());
-                        NeighbourActivity.putExtra(EXTRA_NAME, user.getName());
-                        // + context
-                        /**NeighbourActivity.putExtra(EXTRA_AVATR, Glide.with(getView().getContext())
-                                .load(user.getAvatarUrl())
-                                .apply(RequestOptions.circleCropTransform())
-                                .into(EXTRA_AVATR);*/
-                        NeighbourActivity.putExtra(EXTRA_AVATAR, user.getAvatarUrl());
+                        //NeighbourActivity.putExtra(EXTRA_AVATAR, user.getAvatarUrl());
                         //NeighbourActivity.putExtra(EXTRA_ABOUT, user.getAboutMe());
+
+                        NeighbourActivity.putExtra("EXTRA_ID", user.getId());
+                        System.out.println(" NeighbourFragment Test EXTRA :" + NeighbourActivity.getExtras());
                         // exec activité detail
                         startActivity(NeighbourActivity);
                     }

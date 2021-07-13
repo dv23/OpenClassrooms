@@ -1,5 +1,6 @@
 package com.openclassrooms.entrevoisins.di;
 
+import com.openclassrooms.entrevoisins.repositories.NeighbourRepository;
 import com.openclassrooms.entrevoisins.service.DummyNeighbourApiService;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 
@@ -25,4 +26,8 @@ public class DI {
     public static NeighbourApiService getNewInstanceApiService() {
         return new DummyNeighbourApiService();
     }
+
+    /**public static NeighbourRepository createNeighbourRepository() {
+        //return new NeighbourRepository(new NeighbourApiService());
+    }*/
 }
