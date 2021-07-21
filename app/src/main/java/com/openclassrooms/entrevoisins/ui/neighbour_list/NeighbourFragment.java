@@ -7,6 +7,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -32,19 +33,25 @@ import com.openclassrooms.entrevoisins.view.neighbour.DetailNeighbourActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.OnItemSelected;
+
+import static android.app.Activity.RESULT_OK;
 
 public class  NeighbourFragment extends Fragment {
 
     private NeighbourApiService mApiService;
     private List<Neighbour> mNeighbours;
+    private List<Neighbour> mFavorites;
     private RecyclerView mRecyclerView;
 
-    private final String EXTRA_NAME = "name";
-    private final String EXTRA_AVATAR = "avatar";
-    private final String EXTRA_ABOUT = "avatr";
+    //private final String EXTRA_AVATAR = "avatar";
+    //private final String EXTRA_ABOUT = "avatr";
+    private static final int ACTIVITY_REQUEST_CODE = 42;
+    private int mPosition;
 
     /**
      * Create and return a new instance
@@ -59,6 +66,7 @@ public class  NeighbourFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mApiService = DI.getNeighbourApiService();
+        //mPosition = getArguments().getInt("position", 0);
     }
 
     @Override
@@ -71,6 +79,7 @@ public class  NeighbourFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         // 2 - Calling the method that configuring click on RecyclerView
         this.configureOnClickRecyclerView();
+
         return view;
     }
 
@@ -86,7 +95,9 @@ public class  NeighbourFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // isUserFavorite();
         initList();
+        //initSelection();
     }
 
     @Override
@@ -125,22 +136,18 @@ public class  NeighbourFragment extends Fragment {
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        //mRecyclerView.getItemAnimator();
-                        //Log.e("tag","position:" +position);
         // 1 - Get user from adapter
                         //Neighbour user = mAdapter.getUser(position);
                         Neighbour user = mNeighbours.get(position);
         // 2 - Show result in a Toast
                         //DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
                         Intent NeighbourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
-                        //NeighbourActivity.putExtra("userId", user.getId());
-                        //NeighbourActivity.putExtra(EXTRA_AVATAR, user.getAvatarUrl());
-                        //NeighbourActivity.putExtra(EXTRA_ABOUT, user.getAboutMe());
 
                         NeighbourActivity.putExtra("EXTRA_ID", user.getId());
                         System.out.println(" NeighbourFragment Test EXTRA :" + NeighbourActivity.getExtras());
                         // exec activité detail
-                        startActivity(NeighbourActivity);
+                        //startActivity(NeighbourActivity);
+                        startActivityForResult(NeighbourActivity, ACTIVITY_REQUEST_CODE);
                     }
                 });
     }
@@ -152,8 +159,31 @@ public class  NeighbourFragment extends Fragment {
     }
 
     @Subscribe
-    public void onActivityCreated(){
+    /**public void onActivityCreated(){
 
+    }*/
+
+    public void isUserFavorite() {
+        mFavorites = new ArrayList<>();
+        for (Neighbour neighbour : mNeighbours) {
+            if (neighbour.isFavorite()) {
+                mFavorites.add(neighbour);
+            }
+        }
+       //mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mFavorites, this));
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode) {
+            // Fetch the score from the Intent
+            int favorite = data.getIntExtra(DetailNeighbourActivity.BUNDLE_EXTRA_FAVORI, 0);
+            System.out.println(" on Activity result Neighbour  :" + favorite);
+            //NRepository.getFavoriteNeighbours().clear();
+            //NRepository.addFavoriteNeighbour(mApiService.getNeighbours().get(favorite));
+            //NRepository.getNeighbours().get(favorite);
+            //NRepository.addFavoriteNeighbour(mApiService.getNeighbours().get((int)(mIdl - 1)));
+        }
+    }
 }
