@@ -10,6 +10,7 @@ import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.di.DI;
 import com.openclassrooms.entrevoisins.model.Neighbour;
-import com.openclassrooms.entrevoisins.repositories.NeighbourRepository;
+//import com.openclassrooms.entrevoisins.repositories.NeighbourRepository;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
 import com.openclassrooms.entrevoisins.view.neighbour.DetailNeighbourActivity;
 
@@ -37,27 +38,13 @@ public class ListNeighbourActivity extends AppCompatActivity {
     Toolbar mToolbar;
     @BindView(R.id.VP)
     ViewPager mViewPager;
-    //@BindView((R.id.titleStrip)
-    //PagerTitleStrip mPstrip;
-    //@BindView(R.id.tabItem)
-    //TabItem mTabItemNeighbours;
-    //@BindView(R.id.tabItem2)
-    //TabItem mTabItemFavorites;
-    //FloatingActionButton fav;
-    @BindView(R.id.titleStrip)
-    PagerTitleStrip mTitleStrip;
 
     private NeighbourApiService mApiService;
 
     ListNeighbourPagerAdapter mPagerAdapter;
-    FavoritePagerAdapter mFavAdapter;
+    //FavoritePagerAdapter mFavAdapter;
     //private boolean favorite;
     private static final int GAME_ACTIVITY_REQUEST_CODE = 42;
-
-    //private Object NeighbourRepository;
-    private NeighbourRepository userRepository;
-    private ArrayList<Neighbour> mFavorites;
-    //NeighbourRepository NRepository = (com.openclassrooms.entrevoisins.repositories.NeighbourRepository) DI.getNeighbourApiService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,28 +52,43 @@ public class ListNeighbourActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_neighbour);
         ButterKnife.bind(this);
 
-        //userRepository= DI.getNewInstanceApiService();
         setSupportActionBar(mToolbar);
         // configure fragment dynamique
+        //Set Adapter PageAdapter and glue it together
         mPagerAdapter = new ListNeighbourPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        /**mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));*/
+
+        //Get TabLayout from layout
+        TabLayout tabs= (TabLayout)findViewById(R.id.tabs);
+        //Glue TabLayout and ViewPager together
+        tabs.setupWithViewPager(mViewPager);
+        //Design purpose. Tabs have the same width
+        tabs.setTabMode(TabLayout.MODE_FIXED);
 
         mApiService = DI.getNeighbourApiService();
-        //NeighbourRepository NRepository = (com.openclassrooms.entrevoisins.repositories.NeighbourRepository) DI.getNeighbourApiService();
-        initSelection();
+        mApiService.getFavoriteNeighbours().clear();
+
+        //initSelection();
     }
 
-    public void initSelection() {
+    /**public void initSelection() {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 // assuming users is at tab index 0 and favorites is at tab Index 1
                 if (tab.getPosition() == 1) {
-                    selectFavorites();
+                    //selectFavorites();
                 } else {
                     //selectUsers();
+                    // configure fragment dynamique
+                    System.out.println(" List Neighbour ontabselected :" +mApiService.getNeighbours().toString());
+                    mPagerAdapter = new ListNeighbourPagerAdapter(getSupportFragmentManager());
+                    mViewPager.setAdapter(mPagerAdapter);
+                    mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+                    mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
                 }
             }
 
@@ -96,44 +98,36 @@ public class ListNeighbourActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
         // if you wish to select the users tab at 0 by default
         Objects.requireNonNull(mTabLayout.getTabAt(0)).select();
-    }
+    }*/
 
-    public void isUserFavorite() {
+    /**public void isUserFavorite() {
         mFavorites = new ArrayList<>();
         for (Neighbour user : mApiService.getNeighbours()) {
             if (user.isFavorite()) {
                 mFavorites.add(user);
             }
         }
-    }
+    }*/
 
-    private void selectFavorites() {
-        // whichever adapter you were using to show favorites
-        //FavoritePagerAdapter mFavAdapter = new FavoritePagerAdapter(mFavorites, this);
-        NeighbourAdapter mFavAdapter = new NeighbourAdapter(this, mFavorites);
-        //NeighbourAdapter mFavAdapter = new NeighbourAdapter(getSupportFragmentManager(), mFavorites);
-        //mPageOnglet.setadapter(NeighbourAdapter);
-        //mTitleStrip.setAdapter(mFavAdapter);
-        //mTitleStrip.setOnClickListener();
-        mFavAdapter.notifyDataSetChanged();
+    /**private void selectFavorites() {
         Toast.makeText(ListNeighbourActivity.this, "select Favoris", Toast.LENGTH_LONG).show();
-        //mFavAdapter.notifyDataSetChanged();
-    }
+        //NeighbourRepository.
+        mApiService.getFavoriteNeighbours();
+        System.out.println(" List Neighbour Favorit Neighbour :" +mApiService.getFavoriteNeighbours().toString());
+        //mFavAdapter = new FavoritePagerAdapter(getSupportFragmentManager());
+        //mViewPager2.setAdapter(mFavAdapter);
+        //mViewPager2.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+    }*/
 
     @OnClick(R.id.add_neighbour)
     void addNeighbour() {
         AddNeighbourActivity.navigate(this);
     }
-
-    /**@OnClick(R.id.tabItem2)
-    void Favorites() {
-        System.out.println(" put N fav  : ");
-        Toast.makeText(ListNeighbourActivity.this, "TabFAvoris", Toast.LENGTH_SHORT).show();
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -145,8 +139,9 @@ public class ListNeighbourActivity extends AppCompatActivity {
             //NRepository.getFavoriteNeighbours().clear();
             //FavoritFragment fragment = (FavoritFragment) getFragmentManager().findFragmentById(R.id.titleStrip);
 
-            getFragmentManager().findFragmentById(R.id.titleStrip);
-
+            //getFragmentManager().findFragmentById(R.id.titleStrip);
+            //getFragmentManager().findFragmentById(R.id.VP2);
+            getFragmentManager().findFragmentById(R.id.VP);
             //NRepository.addFavoriteNeighbour(mApiService.getNeighbours().get(favorite));
             //NRepository.getNeighbours().get(favorite);
             //NRepository.addFavoriteNeighbour(mApiService.getNeighbours().get((int)(mIdl - 1)));
