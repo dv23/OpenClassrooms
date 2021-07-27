@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -45,7 +47,7 @@ public class  NeighbourFragment extends Fragment {
 
     private NeighbourApiService mApiService;
     private List<Neighbour> mNeighbours;
-    private List<Neighbour> mFavorites;
+    //private List<Neighbour> mFavorites;
     private RecyclerView mRecyclerView;
 
     //private final String EXTRA_AVATAR = "avatar";
@@ -88,8 +90,10 @@ public class  NeighbourFragment extends Fragment {
      */
     private void initList() {
         mNeighbours = mApiService.getNeighbours();
+        //mFavorites = mApiService.getFavoriteNeighbours();
         mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mNeighbours));
-        // TO DO nouvel écran avec :●un bouton de retour à l'élément précédent
+        // rcv ● élément fav
+        //mRecyclerViewFavorites.setAdapter(new MyNeighbourRecyclerViewAdapter(mFavorites));
     }
 
     @Override
@@ -132,22 +136,22 @@ public class  NeighbourFragment extends Fragment {
     // -----------------
     //ItemClickSupport.addTo(mRecyclerView, R.layout.fragment_neighbour_list)
     private void configureOnClickRecyclerView(){
+        //ItemClickSupport.addTo(mPagerTitleStrip, R.layout.fragment_neighbour)
         ItemClickSupport.addTo(mRecyclerView, R.layout.fragment_neighbour)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
         // 1 - Get user from adapter
-                        //Neighbour user = mAdapter.getUser(position);
-                        Neighbour user = mNeighbours.get(position);
+                Neighbour user = mNeighbours.get(position);
         // 2 - Show result in a Toast
-                        //DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
-                        Intent NeighbourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
+                //DetailNeighbourFragment fragmentById = (DetailNeighbourFragment) getFragmentManager().findFragmentById(R.id.container_detail);
+                Intent NeighbourActivity = new Intent(getActivity(), DetailNeighbourActivity.class);
 
-                        NeighbourActivity.putExtra("EXTRA_ID", user.getId());
-                        System.out.println(" NeighbourFragment Test EXTRA :" + NeighbourActivity.getExtras());
-                        // exec activité detail
-                        //startActivity(NeighbourActivity);
-                        startActivityForResult(NeighbourActivity, ACTIVITY_REQUEST_CODE);
+                NeighbourActivity.putExtra("EXTRA_ID", user.getId());
+                //System.out.println(" NeighbourFragment Test EXTRA :" + NeighbourActivity.getExtras());
+                // exec activité detail
+                startActivity(NeighbourActivity);
+                //startActivityForResult(NeighbourActivity, ACTIVITY_REQUEST_CODE);
                     }
                 });
     }
@@ -156,21 +160,6 @@ public class  NeighbourFragment extends Fragment {
     public void onClickNeighbour(OnItemSelected event) {
         //mApiService.deleteNeighbour(event.neighbour);
         initList();
-    }
-
-    @Subscribe
-    /**public void onActivityCreated(){
-
-    }*/
-
-    public void isUserFavorite() {
-        mFavorites = new ArrayList<>();
-        for (Neighbour neighbour : mNeighbours) {
-            if (neighbour.isFavorite()) {
-                mFavorites.add(neighbour);
-            }
-        }
-       //mRecyclerView.setAdapter(new MyNeighbourRecyclerViewAdapter(mFavorites, this));
     }
 
     @Override
